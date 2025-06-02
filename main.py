@@ -11,7 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-from aiogram.utils.html import escape
+import html # O'zgartirish: aiogram.utils.html o'rniga Pythonning standart html modulini import qilamiz
 
 # .env faylidan muhit o'zgaruvchilarini yuklash
 load_dotenv()
@@ -23,6 +23,7 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 WEB_SERVER_HOST = "0.0.0.0"
 WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 
+
 # Majburiy a'zo bo'lishi kerak bo'lgan kanallar/guruhlar ro'yxati
 # MUHIM: 'id' qiymatlarini o'zingizning kanallaringiz/guruhlaringizning haqiqiy ID'lari bilan almashtiring!
 # Kanal/guruh ID'sini olish uchun @RawDataBot kabi botlardan foydalanishingiz mumkin.
@@ -33,6 +34,7 @@ CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002474257516},
     {"name_uz": "Tanishuvlar olami", "name_ru": "Мир знакомств", "url": "https://t.me/Tanishuvlar18plus_bot", "id": 7845397405}# Misol ID
 ]
+
 bot = Bot(
     token=BOT_TOKEN,
     default=DefaultBotProperties(parse_mode=ParseMode.HTML),
@@ -126,7 +128,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     lang = await get_user_lang(user_id, state) # Foydalanuvchi tilini olamiz
 
     # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = escape(message.from_user.full_name)
+    escaped_user_full_name = html.escape(message.from_user.full_name) # O'zgartirish: html.escape ishlatildi
     # user_profile_link endi ishlatilmaydi
 
 
@@ -156,7 +158,7 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
     lang = await get_user_lang(user_id, state)
 
     # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = escape(callback_query.from_user.full_name)
+    escaped_user_full_name = html.escape(callback_query.from_user.full_name) # O'zgartirish: html.escape ishlatildi
     # user_profile_link endi ishlatilmaydi
 
 
@@ -193,7 +195,7 @@ async def handle_all_messages(message: Message, state: FSMContext) -> None:
         return
 
     # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = escape(message.from_user.full_name)
+    escaped_user_full_name = html.escape(message.from_user.full_name) # O'zgartirish: html.escape ishlatildi
     # user_profile_link endi ishlatilmaydi
 
 

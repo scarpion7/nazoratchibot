@@ -11,7 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-import html # O'zgartirish: aiogram.utils.html o'rniga Pythonning standart html modulini import qilamiz
+import html 
 
 # .env faylidan muhit o'zgaruvchilarini yuklash
 load_dotenv()
@@ -20,7 +20,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 BOT_ADMIN_ID = int(os.getenv("BOT_ADMIN_ID"))  # Bot adminining ID'si
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-WEB_SERVER_HOST = "0.0.0.0"
+WEB_SERVER_HOST = "0.0.00" # Hostni "0.0.0.0" qilib qoldiring
 WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 
 
@@ -32,7 +32,7 @@ CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1002683172524}, # Misol ID
     {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
     {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002571964009}, # Misol ID
-     {"name_uz": "Tanishuv chatbot", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/Tanishuv18plus_bot", "id": 7350785727} # Misol ID
+     {"name_uz": "Tanishuv chatbot", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/Tanishuv18plus_bot", "id": 7350785727} # Misol ID (Bu bot IDsi, avtomatik a'zo deb hisoblanadi)
         
 ]
 
@@ -48,8 +48,7 @@ dp = Dispatcher(storage=MemoryStorage())
 TEXTS = {
     "uz": {
         "start_welcome": "Assalomu alaykum! Botdan to'liq foydalanish uchun quyidagi shartlarni bajaring:",
-        # Yangilangan xabar matni: faqat ism va so'ralgan jumlalar
-        "not_a_member_multiple": "<b>{user_full_name}</b>, yozish uchun quyidagi kanallar/guruhlarga a'zo bo'lishingiz kerak:Iltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
+        "not_a_member_multiple": "<b>{user_full_name}</b>, yozish uchun quyidagi kanallar/guruhlarga a'zo bo'lishingiz kerak:\n{missing_channels}\nIltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
         "all_conditions_met_message": "Siz barcha shartlarni bajardingiz va botdan foydalanishingiz mumkin!",
         "check_again_button": "✅ Qayta tekshirish",
         "error_deleting_message": "Xabarni o'chirishda xato yuz berdi.",
@@ -57,7 +56,6 @@ TEXTS = {
     },
     "ru": {
         "start_welcome": "Привет! Чтобы пользоваться ботом в полной мере, выполните следующие условия:",
-        # Yangilangan xabar matni: faqat ism va so'ralgan jumlalar
         "not_a_member_multiple": "<b>{user_full_name}</b>, чтобы писать, вам нужно подписаться на следующие каналы/группы:\n{missing_channels}\nПожалуйста, подпишитесь и нажмите кнопку 'Проверить снова'.",
         "all_conditions_met_message": "Вы выполнили все условия и можете пользоваться ботом!",
         "check_again_button": "✅ Проверить снова",
@@ -82,6 +80,12 @@ async def check_all_channel_memberships(user_id: int, lang: str) -> tuple[bool, 
     for channel_info in CHANNELS_TO_SUBSCRIBE:
         channel_id = channel_info["id"]
         channel_name = channel_info[f"name_{lang}"]
+        
+        # Agar ID foydalanuvchi ID'si bo'lsa (ya'ni botning o'zi), uni avtomatik a'zo deb hisoblaymiz
+        if isinstance(channel_id, int) and channel_id > 0: # User ID'lar pozitiv butun sonlar bo'ladi
+            if user_id == channel_id:
+                continue # Botni o'zi bo'lgani uchun a'zo deb hisoblaymiz
+        
         try:
             user_status = await bot.get_chat_member(channel_id, user_id)
             if user_status.status not in ["member", "administrator", "creator"]:
@@ -102,7 +106,9 @@ def get_check_keyboard(lang: str, missing_channels_info: list) -> InlineKeyboard
 
     # Agar a'zo bo'linmagan kanallar bo'lsa, ular uchun tugmalar qo'shamiz
     for channel_info in missing_channels_info:
-        keyboard.append([InlineKeyboardButton(text=channel_info[f"name_{lang}"], url=channel_info["url"])])
+        # Faqat URL mavjud bo'lsa tugmani qo'shamiz
+        if channel_info.get("url"):
+            keyboard.append([InlineKeyboardButton(text=channel_info[f"name_{lang}"], url=channel_info["url"])])
     
     # Qayta tekshirish tugmasi
     keyboard.append([InlineKeyboardButton(text=TEXTS[lang]["check_again_button"], callback_data="check_membership")])
@@ -128,9 +134,8 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     lang = await get_user_lang(user_id, state) # Foydalanuvchi tilini olamiz
 
-    # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = html.escape(message.from_user.full_name) # O'zgartirish: html.escape ishlatildi
-    # user_profile_link endi ishlatilmaydi
+    # Foydalanuvchining ismini HTML-escape qilamiz va profiliga havola beramiz
+    user_full_name_linked = f"<a href='tg://user?id={user_id}'>{html.escape(message.from_user.full_name)}</a>"
 
 
     await message.answer(TEXTS[lang]["start_welcome"])
@@ -143,12 +148,10 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     else:
         response_text = ""
         if missing_channels_info:
-            missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=escaped_user_full_name,
-                # user_profile_link endi ishlatilmaydi
-                missing_channels="\n".join([f"- {name}" for name in missing_names])
-            ) + "\n\n"
+                user_full_name=user_full_name_linked,
+                missing_channels="\n".join([f"- {c[f'name_{lang}']}" for c in missing_channels_info])
+            )
         
         await message.answer(response_text.strip(), reply_markup=get_check_keyboard(lang, missing_channels_info))
 
@@ -158,7 +161,7 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
     user_id = callback_query.from_user.id
     lang = await get_user_lang(user_id, state)
 
-    escaped_user_full_name = html.escape(callback_query.from_user.full_name)
+    user_full_name_linked = f"<a href='tg://user?id={user_id}'>{html.escape(callback_query.from_user.full_name)}</a>"
 
     all_met, missing_channels_info = await check_all_channel_memberships(user_id, lang)
 
@@ -177,11 +180,10 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
         # Agar shartlar bajarilmagan bo'lsa
         response_text = ""
         if missing_channels_info:
-            missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=escaped_user_full_name,
-                missing_channels="\n".join([f"- {name}" for name in missing_names])
-            ) + "\n\n"
+                user_full_name=user_full_name_linked,
+                missing_channels="\n".join([f"- {c[f'name_{lang}']}" for c in missing_channels_info])
+            )
 
         current_message_text = callback_query.message.html_text
         current_reply_markup = callback_query.message.reply_markup
@@ -208,9 +210,8 @@ async def handle_all_messages(message: Message, state: FSMContext) -> None:
     if message.text and message.text.startswith('/'):
         return
 
-    # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = html.escape(message.from_user.full_name) # O'zgartirish: html.escape ishlatildi
-    # user_profile_link endi ishlatilmaydi
+    # Foydalanuvchining ismini HTML-escape qilamiz va profiliga havola beramiz
+    user_full_name_linked = f"<a href='tg://user?id={user_id}'>{html.escape(message.from_user.full_name)}</a>"
 
 
     # Shartlarni tekshiramiz (faqat kanal a'zoligi)
@@ -221,17 +222,15 @@ async def handle_all_messages(message: Message, state: FSMContext) -> None:
         # Bu yerda hech narsa qilmaymiz, xabar o'chirilmaydi.
         pass
     else:
-        # Shartlar bajarilmagan. Xabarni o'chiramiz va foydalanuvchini xabardor qilamiz.
+        # Shartlar bajarilmagan. Xabarni o'chiriramiz va foydalanuvchini xabardor qilamiz.
         await delete_message_after_delay(message)
 
         response_text = ""
         if missing_channels_info:
-            missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=escaped_user_full_name,
-                # user_profile_link endi ishlatilmaydi
-                missing_channels="\n".join([f"- {name}" for name in missing_names])
-            ) + "\n\n"
+                user_full_name=user_full_name_linked,
+                missing_channels="\n".join([f"- {c[f'name_{lang}']}" for c in missing_channels_info])
+            )
         
         # Shartlar bajarilmaganligi haqida xabar yuboramiz
         await message.answer(response_text.strip(), reply_markup=get_check_keyboard(lang, missing_channels_info))
@@ -276,6 +275,9 @@ async def main() -> None:
             await bot.session.close()
             print("Bot stopped and resources released.")
 
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 if __name__ == "__main__":
     asyncio.run(main())

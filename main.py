@@ -41,7 +41,7 @@ TARGET_GROUP_USERNAME = "oila_mjm_vodiy_12_viloyat_jmj" # Misol: "my_awesome_gro
 TARGET_GROUP_INVITE_LINK = "https://t.me/+your_invite_link" # Misol: "https://t.me/+AbCdEfGhIjK"
 
 # Har bir foydalanuvchi qo'shishi kerak bo'lgan odam soni
-REQUIRED_ADDS = 5
+REQUIRED_ADDS = 0
 
 # Bot obyektini yaratish
 bot = Bot(

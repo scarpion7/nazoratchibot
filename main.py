@@ -11,6 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from urllib.parse import urlparse
 from dotenv import load_dotenv
+from aiogram.utils.html import escape # <-- Yangi import
 
 # .env faylidan muhit o'zgaruvchilarini yuklash
 load_dotenv()
@@ -28,8 +29,9 @@ WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 # Odatda ID'lar -100 bilan boshlanadi.
 CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1001234567890}, # Misol ID
-    {"name_uz": "Oila va ayollar Guruhi", "name_ru": "Группа Семья МЖМ Долина", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
-    {"name_uz": "Oila MJM Vodiy Guruhi", "name_ru": "Наш Женский Клуб", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1001122334455} # Misol ID
+    {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
+    {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1001122334455},
+    {"name_uz": "Tanishuvlar olami", "name_ru": "Мир знакомств", "url": "https://t.me/Tanishuvlar18plus_bot", "id": 7845397405}# Misol ID
 ]
 
 # Bot obyektini yaratish
@@ -45,7 +47,8 @@ dp = Dispatcher(storage=MemoryStorage())
 TEXTS = {
     "uz": {
         "start_welcome": "Assalomu alaykum! Botdan to'liq foydalanish uchun quyidagi shartlarni bajaring:",
-        "not_a_member_multiple": "<b>{user_full_name}, siz quyidagilarga a'zo emassiz:ltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
+        # Yangilangan xabar matni: faqat ism va so'ralgan jumlalar
+        "not_a_member_multiple": "<b>{user_full_name}</b>, yozish uchun quyidagi kanallar/guruhlarga a'zo bo'lishingiz kerak:\n{missing_channels}\nIltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
         "all_conditions_met_message": "Siz barcha shartlarni bajardingiz va botdan foydalanishingiz mumkin!",
         "check_again_button": "✅ Qayta tekshirish",
         "error_deleting_message": "Xabarni o'chirishda xato yuz berdi.",
@@ -53,7 +56,8 @@ TEXTS = {
     },
     "ru": {
         "start_welcome": "Привет! Чтобы пользоваться ботом в полной мере, выполните следующие условия:",
-        "not_a_member_multiple": "<b>{user_full_name}, вы не подписаны на следующие каналы/группы:Пожалуйста, подпишитесь и нажмите кнопку 'Проверить снова'.",
+        # Yangilangan xabar matni: faqat ism va so'ralgan jumlalar
+        "not_a_member_multiple": "<b>{user_full_name}</b>, чтобы писать, вам нужно подписаться на следующие каналы/группы:\n{missing_channels}\nПожалуйста, подпишитесь и нажмите кнопку 'Проверить снова'.",
         "all_conditions_met_message": "Вы выполнили все условия и можете пользоваться ботом!",
         "check_again_button": "✅ Проверить снова",
         "error_deleting_message": "Произошла ошибка при удалении сообщения.",
@@ -123,12 +127,9 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     lang = await get_user_lang(user_id, state) # Foydalanuvchi tilini olamiz
 
-    # Foydalanuvchining ismini va profil linkini olamiz
-    user_full_name = message.from_user.full_name
-    if message.from_user.username:
-        user_profile_link = f"<a href='https://t.me/{message.from_user.username}'>@{message.from_user.username}</a>"
-    else:
-        user_profile_link = f"<a href='tg://user?id={user_id}'>{user_id}</a>"
+    # Foydalanuvchining ismini HTML-escape qilamiz
+    escaped_user_full_name = escape(message.from_user.full_name)
+    # user_profile_link endi ishlatilmaydi
 
 
     await message.answer(TEXTS[lang]["start_welcome"])
@@ -143,8 +144,8 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         if missing_channels_info:
             missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=user_full_name,
-                user_profile_link=user_profile_link,
+                user_full_name=escaped_user_full_name,
+                # user_profile_link endi ishlatilmaydi
                 missing_channels="\n".join([f"- {name}" for name in missing_names])
             ) + "\n\n"
         
@@ -156,12 +157,9 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
     user_id = callback_query.from_user.id
     lang = await get_user_lang(user_id, state)
 
-    # Foydalanuvchining ismini va profil linkini olamiz
-    user_full_name = callback_query.from_user.full_name
-    if callback_query.from_user.username:
-        user_profile_link = f"<a href='https://t.me/{callback_query.from_user.username}'>@{callback_query.from_user.username}</a>"
-    else:
-        user_profile_link = f"<a href='tg://user?id={user_id}'>{user_id}</a>"
+    # Foydalanuvchining ismini HTML-escape qilamiz
+    escaped_user_full_name = escape(callback_query.from_user.full_name)
+    # user_profile_link endi ishlatilmaydi
 
 
     all_met, missing_channels_info = await check_all_channel_memberships(user_id, lang)
@@ -173,8 +171,8 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
         if missing_channels_info:
             missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=user_full_name,
-                user_profile_link=user_profile_link,
+                user_full_name=escaped_user_full_name,
+                # user_profile_link endi ishlatilmaydi
                 missing_channels="\n".join([f"- {name}" for name in missing_names])
             ) + "\n\n"
         
@@ -196,12 +194,9 @@ async def handle_all_messages(message: Message, state: FSMContext) -> None:
     if message.text and message.text.startswith('/'):
         return
 
-    # Foydalanuvchining ismini va profil linkini olamiz
-    user_full_name = message.from_user.full_name
-    if message.from_user.username:
-        user_profile_link = f"<a href='https://t.me/{message.from_user.username}'>@{message.from_user.username}</a>"
-    else:
-        user_profile_link = f"<a href='tg://user?id={user_id}'>{user_id}</a>"
+    # Foydalanuvchining ismini HTML-escape qilamiz
+    escaped_user_full_name = escape(message.from_user.full_name)
+    # user_profile_link endi ishlatilmaydi
 
 
     # Shartlarni tekshiramiz (faqat kanal a'zoligi)
@@ -219,8 +214,8 @@ async def handle_all_messages(message: Message, state: FSMContext) -> None:
         if missing_channels_info:
             missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
-                user_full_name=user_full_name,
-                user_profile_link=user_profile_link,
+                user_full_name=escaped_user_full_name,
+                # user_profile_link endi ishlatilmaydi
                 missing_channels="\n".join([f"- {name}" for name in missing_names])
             ) + "\n\n"
         

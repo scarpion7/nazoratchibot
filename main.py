@@ -48,7 +48,7 @@ TEXTS = {
     "uz": {
         "start_welcome": "Assalomu alaykum! Botdan to'liq foydalanish uchun quyidagi shartlarni bajaring:",
         # Yangilangan xabar matni: faqat ism va so'ralgan jumlalar
-        "not_a_member_multiple": "<b>{user_full_name}</b>, yozish uchun quyidagi kanallar/guruhlarga a'zo bo'lishingiz kerak:\n{missing_channels}\nIltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
+        "not_a_member_multiple": "<b>{user_full_name}</b>, yozish uchun quyidagi kanallar/guruhlarga a'zo bo'lishingiz kerak:Iltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
         "all_conditions_met_message": "Siz barcha shartlarni bajardingiz va botdan foydalanishingiz mumkin!",
         "check_again_button": "✅ Qayta tekshirish",
         "error_deleting_message": "Xabarni o'chirishda xato yuz berdi.",

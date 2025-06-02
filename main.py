@@ -28,9 +28,9 @@ WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 # Kanal/guruh ID'sini olish uchun @RawDataBot kabi botlardan foydalanishingiz mumkin.
 # Odatda ID'lar -100 bilan boshlanadi.
 CHANNELS_TO_SUBSCRIBE = [
-    {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1001234567890}, # Misol ID
+    {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1002683172524}, # Misol ID
     {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
-    {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1001122334455},
+    {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002474257516},
     {"name_uz": "Tanishuvlar olami", "name_ru": "Мир знакомств", "url": "https://t.me/Tanishuvlar18plus_bot", "id": 7845397405}# Misol ID
 ]
 

@@ -11,7 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-#from aiogram.utils.html import escape
+from aiogram.utils.html import escape
 
 # .env faylidan muhit o'zgaruvchilarini yuklash
 load_dotenv()

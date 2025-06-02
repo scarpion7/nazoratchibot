@@ -33,8 +33,6 @@ CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002474257516},
     {"name_uz": "Tanishuvlar olami", "name_ru": "Мир знакомств", "url": "https://t.me/Tanishuvlar18plus_bot", "id": 7845397405}# Misol ID
 ]
-
-# Bot obyektini yaratish
 bot = Bot(
     token=BOT_TOKEN,
     default=DefaultBotProperties(parse_mode=ParseMode.HTML),

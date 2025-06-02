@@ -157,30 +157,43 @@ async def check_membership_callback(callback_query: types.CallbackQuery, state: 
     user_id = callback_query.from_user.id
     lang = await get_user_lang(user_id, state)
 
-    # Foydalanuvchining ismini HTML-escape qilamiz
-    escaped_user_full_name = html.escape(callback_query.from_user.full_name) # O'zgartirish: html.escape ishlatildi
-    # user_profile_link endi ishlatilmaydi
-
+    escaped_user_full_name = html.escape(callback_query.from_user.full_name)
 
     all_met, missing_channels_info = await check_all_channel_memberships(user_id, lang)
 
     if all_met:
-        await callback_query.message.edit_text(TEXTS[lang]["all_conditions_met_message"])
+        # Agar barcha shartlar bajarilgan bo'lsa
+        current_message_text = callback_query.message.html_text
+        new_message_text = TEXTS[lang]["all_conditions_met_message"]
+
+        # Agar matn hozirgidan farq qilsa, tahrirlaymiz
+        if current_message_text.strip() != new_message_text.strip():
+            await callback_query.message.edit_text(new_message_text)
+        else:
+            # Agar matn bir xil bo'lsa, hech narsa qilmaymiz, shunchaki answer() qilamiz
+            pass
     else:
+        # Agar shartlar bajarilmagan bo'lsa
         response_text = ""
         if missing_channels_info:
             missing_names = [c[f"name_{lang}"] for c in missing_channels_info]
             response_text += TEXTS[lang]["not_a_member_multiple"].format(
                 user_full_name=escaped_user_full_name,
-                # user_profile_link endi ishlatilmaydi
                 missing_channels="\n".join([f"- {name}" for name in missing_names])
             ) + "\n\n"
-        
-        await callback_query.message.edit_text(response_text.strip(), reply_markup=get_check_keyboard(lang, missing_channels_info))
-    
+
+        current_message_text = callback_query.message.html_text
+        current_reply_markup = callback_query.message.reply_markup
+        new_reply_markup = get_check_keyboard(lang, missing_channels_info)
+
+        # Agar matn yoki tugmalar paneli o'zgargan bo'lsa, tahrirlaymiz
+        if current_message_text.strip() != response_text.strip() or current_reply_markup != new_reply_markup:
+            await callback_query.message.edit_text(response_text.strip(), reply_markup=new_reply_markup)
+        else:
+            # Agar matn va tugmalar bir xil bo'lsa, xato bermaslik uchun hech narsa qilmaymiz
+            pass
+
     await callback_query.answer() # Callback query ni yopish
-
-
 @dp.message()
 async def handle_all_messages(message: Message, state: FSMContext) -> None:
     """

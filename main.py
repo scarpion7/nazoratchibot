@@ -45,7 +45,7 @@ dp = Dispatcher(storage=MemoryStorage())
 TEXTS = {
     "uz": {
         "start_welcome": "Assalomu alaykum! Botdan to'liq foydalanish uchun quyidagi shartlarni bajaring:",
-        "not_a_member_multiple": "<b>{user_full_name}</b> {user_profile_link}, siz quyidagi kanallar/guruhlarga a'zo emassiz:\n{missing_channels}\nIltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
+        "not_a_member_multiple": "<b>{user_full_name}, siz quyidagilarga a'zo emassiz:ltimos, a'zo bo'lib, 'Qayta tekshirish' tugmasini bosing.",
         "all_conditions_met_message": "Siz barcha shartlarni bajardingiz va botdan foydalanishingiz mumkin!",
         "check_again_button": "✅ Qayta tekshirish",
         "error_deleting_message": "Xabarni o'chirishda xato yuz berdi.",
@@ -53,7 +53,7 @@ TEXTS = {
     },
     "ru": {
         "start_welcome": "Привет! Чтобы пользоваться ботом в полной мере, выполните следующие условия:",
-        "not_a_member_multiple": "<b>{user_full_name}</b> {user_profile_link}, вы не подписаны на следующие каналы/группы:\n{missing_channels}\nПожалуйста, подпишитесь и нажмите кнопку 'Проверить снова'.",
+        "not_a_member_multiple": "<b>{user_full_name}, вы не подписаны на следующие каналы/группы:Пожалуйста, подпишитесь и нажмите кнопку 'Проверить снова'.",
         "all_conditions_met_message": "Вы выполнили все условия и можете пользоваться ботом!",
         "check_again_button": "✅ Проверить снова",
         "error_deleting_message": "Произошла ошибка при удалении сообщения.",

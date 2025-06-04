@@ -39,9 +39,9 @@ CHANNELS_TO_SUBSCRIBE = [
 # A'zoligi tekshirilmasligi kerak bo'lgan ID'lar ro'yxati
 # Bu yerga kanal, chat, foydalanuvchi, bot ID'larini qo'shishingiz mumkin.
 EXEMPT_IDS = [
-    -1001234567890,  # Misol kanal ID'si (bunga a'zolik shart emas)
-    123456789,       # Misol foydalanuvchi ID'si (bu foydalanuvchi uchun cheklov yo'q)
-    987654321        # Misol bot ID'si
+    -1002474257516,  # Misol kanal ID'si (bunga a'zolik shart emas)
+    6115064055,       # Misol foydalanuvchi ID'si (bu foydalanuvchi uchun cheklov yo'q)
+           # Misol bot ID'si
 ]
 
 bot = Bot(

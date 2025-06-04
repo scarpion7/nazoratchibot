@@ -31,9 +31,17 @@ WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1002683172524}, # Misol ID
     {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
-    #{"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002571964009}, # Misol ID
+    {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002571964009}, # Misol ID
     {"name_uz": "MJM MJMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_mjm_vodiy_12_viloyat_jmj", "id": -1002474257516} # Misol ID 
         
+]
+
+# A'zoligi tekshirilmasligi kerak bo'lgan ID'lar ro'yxati
+# Bu yerga kanal, chat, foydalanuvchi, bot ID'larini qo'shishingiz mumkin.
+EXEMPT_IDS = [
+    -1001234567890,  # Misol kanal ID'si (bunga a'zolik shart emas)
+    123456789,       # Misol foydalanuvchi ID'si (bu foydalanuvchi uchun cheklov yo'q)
+    987654321        # Misol bot ID'si
 ]
 
 bot = Bot(
@@ -79,22 +87,25 @@ async def check_all_channel_memberships(user_id: int, lang: str) -> tuple[bool, 
     missing_channels_info = []
     for channel_info in CHANNELS_TO_SUBSCRIBE:
         channel_id = channel_info["id"]
-        channel_name = channel_info[f"name_{lang}"]
-        
+
+        # Agar kanal ID'si EXEMPT_IDS ro'yxatida bo'lsa, tekshirmaymiz
+        if channel_id in EXEMPT_IDS:
+            continue
+
         # Agar ID foydalanuvchi ID'si bo'lsa (ya'ni botning o'zi), uni avtomatik a'zo deb hisoblaymiz
-        if isinstance(channel_id, int) and channel_id > 0: # User ID'lar pozitiv butun sonlar bo'ladi
+        if isinstance(channel_id, int) and channel_id > 0:
             if user_id == channel_id:
-                continue # Botni o'zi bo'lgani uchun a'zo deb hisoblaymiz
-        
+                continue
+
+        # ... (qolgan mavjud kod) ...
         try:
             user_status = await bot.get_chat_member(channel_id, user_id)
             if user_status.status not in ["member", "administrator", "creator"]:
                 missing_channels_info.append(channel_info)
         except Exception as e:
-            print(f"Kanal {channel_name} ({channel_id}) tekshirishda xato: {e}")
-            # Adminni xabardor qilish
+            print(f"Kanal {channel_info[f'name_{lang}']} ({channel_id}) tekshirishda xato: {e}")
             await bot.send_message(BOT_ADMIN_ID, TEXTS[lang]["admin_notification_channel_check_error"])
-            missing_channels_info.append(channel_info) # Xato bo'lsa ham a'zo emas deb hisoblaymiz
+            missing_channels_info.append(channel_info)
     
     return not missing_channels_info, missing_channels_info
 

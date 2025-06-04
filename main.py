@@ -41,7 +41,7 @@ CHANNELS_TO_SUBSCRIBE = [
 EXEMPT_IDS = [
     -1002474257516, # Misol kanal ID'si (bunga a'zolik shart emas)
     6115064055,
-    1191351378 # Misol foydalanuvchi ID'si (bu foydalanuvchi uchun cheklov yo'q)
+    1191351378, # Misol foydalanuvchi ID'si (bu foydalanuvchi uchun cheklov yo'q)
     1087968824      # Misol bot ID'si
 ]
 

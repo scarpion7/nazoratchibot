@@ -23,30 +23,25 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 WEB_SERVER_HOST = "0.0.0.0" # Hostni "0.0.0.0" qilib qoldiring
 WEB_SERVER_PORT = int(os.getenv("PORT", 8000))
 
-# --- YANGI QO'SHILGAN QISM ---
+
 # Majburiy a'zolikni chetlab o'tishi kerak bo'lgan ID'lar ro'yxati
-# Bu yerga foydalanuvchi ID'lari, guruh ID'lari, kanal ID'lari (manfiy sonlar) kirishi mumkin.
-# Agar .env dan olmoqchi bo'lsangiz:
-# ALLOWED_IDS_STR = os.getenv("ALLOWED_IDS", "") # .env faylida ALLOWED_IDS="ID1,ID2,ID3" kabi bo'lishi mumkin
-# ALLOWED_IDS = [int(x.strip()) for x in ALLOWED_IDS_STR.split(',') if x.strip().isdigit()] # Raqam bo'lganlarni int'ga aylantiramiz
-# Agar to'g'ridan-to'g'ri kodda bermoqchi bo'lsangiz:
+
 ALLOWED_IDS = [
     BOT_ADMIN_ID, # Bot admini har doim ruxsat etilgan bo'lsin
     # Qoshimcha ID'lar:
     1087968824, # Misol: Bitta foydalanuvchi ID'si
     -1002474257516, # Misol: Bitta kanal yoki guruh ID'si
 ]
-# --- QO'SHILGAN QISM TUGADI ---
 
 
 # Majburiy a'zo bo'lishi kerak bo'lgan kanallar/guruhlar ro'yxati
-# MUHIM: 'id' qiymatlarini o'zingizning kanallaringiz/guruhlaringizning haqiqiy ID'lari bilan almashtiring!
-# Kanal/guruh ID'sini olish uchun @RawDataBot kabi botlardan foydalanishingiz mumkin.
-# Odatda ID'lar -100 bilan boshlanadi.
+
 CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "TopTanish Rasmiy Kanali", "name_ru": "Официальный канал TopTanish", "url": "https://t.me/ommaviy_tanishuv_kanali", "id": -1002683172524}, # Misol ID
     {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
-    {"name_uz": "MJM MJMJ Oila tanishuv (Majburiy emas)", "name_ru": "МЖМ ЖМЖ Семейные Знакомства (Необязательно)", "url": "https://t.me/oila_mjm_vodiy_12_viloyat_jmj", "id": -1002474257516, "optional": True} # Bu kanalga a'zo bo'lish majburiy emas
+    {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002571964009}, # Misol ID
+    {"name_uz": "MJM MJMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_mjm_vodiy_12_viloyat_jmj", "id": -1002474257516} # Misol ID 
+        
 ]
 
 bot = Bot(

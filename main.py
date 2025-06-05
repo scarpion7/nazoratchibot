@@ -41,7 +41,7 @@ CHANNELS_TO_SUBSCRIBE = [
     {"name_uz": "Oila MJM va ayollar", "name_ru": "Семья МЖМ и женщины", "url": "https://t.me/oilamjmchat", "id": -1002430518370}, # Misol ID
     {"name_uz": "MJM JMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_ayollar_mjm_jmj_12_viloyat", "id": -1002571964009}, # Misol ID
     #{"name_uz": "MJM MJMJ Oila tanishuv", "name_ru": "МЖМ ЖМЖ Семейные Знакомства", "url": "https://t.me/oila_mjm_vodiy_12_viloyat_jmj", "id": -1002474257516} # Misol ID 
-        
+    {"name_uz": "MJM Oila tanishuv", "name_ru": "МЖМ Семейные Знакомства", "url": "https://t.me/mjm_mjmj_vodiy_12_viloyat_jmj", "id": -1002705438480}   
 ]
 
 bot = Bot(
